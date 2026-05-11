@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Neuronium Engineers — Frankfurt am Main</title>
+<meta name="description" content="Neuronium Engineers baut agentische KI-Infrastruktur für die öffentliche Verwaltung und den deutschen Mittelstand. DSGVO-konform. Made in Germany.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#020c14;--s1:#061420;--s2:#0a1d2e;
+  --b:#00bfff;--g:#00ff99;--a:#ff9500;--r:#ff2d55;--p:#c084fc;
+  --txt:#a8c8e0;--mut:#2e5068;--m2:#4a7090;
+  --bdr:rgba(0,191,255,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#020c14;color:#a8c8e0;font-family:'IBM Plex Mono',Consolas,monospace;overflow-x:hidden}
+a{cursor:pointer;text-decoration:none}button{cursor:pointer}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#2e5068}
+::selection{background:rgba(0,191,255,.2);color:#00bfff}
+
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(2.2);opacity:.2}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes scanline{0%{top:-2px}100%{top:100%}}
+@keyframes neon{0%,100%{text-shadow:0 0 20px rgba(0,191,255,.4)}50%{text-shadow:0 0 40px rgba(0,191,255,.8),0 0 60px rgba(0,191,255,.3)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes countUp{from{opacity:0}to{opacity:1}}
+
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+section{position:relative;overflow:hidden}
+
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:.7rem 1.8rem;border:none;cursor:pointer;transition:all .22s}
+.btn-primary{background:#00ff99;color:#020c14;font-weight:700;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.btn-primary:hover{background:#00bfff;transform:translateY(-2px)}
+.btn-secondary{background:transparent;color:#00bfff;border:1px solid rgba(0,191,255,.4);clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%)}
+.btn-secondary:hover{border-color:#00bfff;background:rgba(0,191,255,.08)}
+
+/* NAV */
+#nav{position:fixed;top:0;left:0;right:0;z-index:500;height:64px;display:flex;align-items:center;background:rgba(2,12,20,.95);border-bottom:1px solid rgba(0,191,255,.1);backdrop-filter:blur(12px)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1200px;margin:0 auto;padding:0 2rem}
+.nav-logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+.nav-logo-dot{width:8px;height:8px;border-radius:50%;background:#00ff99;animation:pulse 2s infinite;flex-shrink:0}
+.nav-logo-text{font-family:'IBM Plex Mono',monospace;font-size:.88rem;letter-spacing:.06em;color:#00bfff}
+.nav-logo-text b{color:#00ff99}
+.nav-logo-badge{font-size:.55rem;padding:.1rem .38rem;border:1px solid rgba(192,132,252,.35);color:#c084fc;letter-spacing:.08em}
+.nav-links{display:flex;align-items:center;gap:.2rem}
+.nav-link{font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;color:#2e5068;text-decoration:none;padding:.38rem .85rem;border-bottom:2px solid transparent;transition:all .2s}
+.nav-link:hover{color:#a8c8e0}.nav-link.on{color:#00bfff;border-bottom-color:#00bfff}
+.nav-cta{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;padding:.4rem 1.2rem;background:#00ff99;color:#020c14;font-weight:700;border:none;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);transition:all .2s;text-decoration:none;font-family:'IBM Plex Mono',monospace;margin-left:.5rem}
+.nav-cta:hover{background:#00bfff}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;padding-top:64px}
+#hero-canvas{position:absolute;inset:0;z-index:0}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(0,191,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,191,255,.025) 1px,transparent 1px);background-size:60px 60px;z-index:1;pointer-events:none}
+.hero-scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,191,255,.12),transparent);animation:scanline 10s linear infinite;z-index:2;pointer-events:none}
+.hero-wrap{position:relative;z-index:3;width:100%;max-width:1200px;margin:0 auto;padding:3rem 2rem 5rem;display:grid;grid-template-columns:1fr 400px;gap:4rem;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;font-size:.63rem;letter-spacing:.14em;text-transform:uppercase;color:#00ff99;border:1px solid rgba(0,255,153,.22);padding:.32rem .85rem;margin-bottom:1.75rem;background:rgba(0,255,153,.04)}
+.hero-badge-dot{width:5px;height:5px;border-radius:50%;background:#00ff99;animation:pulse 1.5s infinite}
+.hero-pre{font-size:.72rem;color:#2e5068;letter-spacing:.18em;text-transform:uppercase;margin-bottom:.6rem}
+.hero-h1{font-family:'Syne',sans-serif;font-size:clamp(2.6rem,5vw,4.4rem);font-weight:800;line-height:1.06;letter-spacing:-.02em;margin-bottom:1.5rem}
+.hero-h1 .l1{color:#a8c8e0;display:block}
+.hero-h1 .l2{color:#00bfff;display:block;animation:neon 4s ease-in-out infinite}
+.hero-h1 .l3{color:#00ff99;display:block}
+.hero-sub{font-size:.88rem;color:#a8c8e0;line-height:1.82;max-width:520px;margin-bottom:2.5rem;opacity:.88}
+.hero-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+.hero-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid rgba(0,191,255,.1);background:rgba(6,20,32,.6)}
+.hm{padding:1.2rem 1rem;border-right:1px solid rgba(0,191,255,.08)}
+.hm:last-child{border:none}
+.hm-val{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;line-height:1;display:block;margin-bottom:.22rem}
+.hm-val.b{color:#00bfff}.hm-val.g{color:#00ff99}.hm-val.r{color:#ff2d55}
+.hm-lbl{font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:#2e5068;line-height:1.45}
+
+/* Hero terminal */
+.hero-terminal{background:rgba(6,20,32,.96);border:1px solid rgba(0,191,255,.15);overflow:hidden;animation:drift 7s ease-in-out infinite}
+.ht-bar{display:flex;align-items:center;gap:.4rem;padding:.55rem .85rem;background:#061420;border-bottom:1px solid rgba(0,191,255,.1)}
+.htd{width:9px;height:9px;border-radius:50%}.htd.r{background:#ff5f57}.htd.y{background:#febc2e}.htd.g{background:#28c840}
+.ht-title{font-size:.62rem;color:#2e5068;margin-left:.3rem;letter-spacing:.06em}
+.ht-body{padding:.85rem;font-size:.68rem;line-height:1.88;max-height:280px;overflow:hidden}
+.htl{display:flex;gap:.45rem;margin-bottom:1px}
+.htp{flex-shrink:0;width:70px;font-size:.58rem;opacity:.8}
+.htp.THINK{color:#60a5fa}.htp.PLAN{color:#a8c8e0}.htp.ACT{color:#ff9500}.htp.OBSERVE{color:#00ff99}.htp.ANSWER{color:#fff}.htp.SYS{color:#2e5068}.htp.SIMULATE{color:#c084fc}.htp.COMMIT{color:#00ff99}.htp.EVALUATE{color:#c084fc}
+.htm{flex:1}
+.htm.THINK{color:#93c5fd}.htm.PLAN{color:#a8c8e0}.htm.ACT{color:#ff9500}.htm.OBSERVE{color:#00ff99}.htm.ANSWER{color:#fff;font-weight:500}.htm.SYS{color:#2e5068}.htm.SIMULATE{color:#c084fc}.htm.COMMIT{color:#00ff99}.htm.EVALUATE{color:#c084fc}
+.ht-cur{display:inline-block;width:7px;height:12px;background:#00bfff;animation:blink .8s infinite;vertical-align:text-bottom}
+
+/* SECTION SHARED */
+.sec-lbl{display:inline-flex;align-items:center;gap:.5rem;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#2e5068;margin-bottom:.85rem}
+.sec-lbl::before{content:'';display:block;width:20px;height:1px;background:#2e5068}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.9rem,3.5vw,3rem);font-weight:800;line-height:1.12;letter-spacing:-.02em;margin-bottom:1.25rem;color:#fff}
+.sec-title em{font-style:normal}
+.sec-sub{font-size:.88rem;color:#a8c8e0;line-height:1.82;max-width:560px;margin-bottom:2.5rem}
+.rule{height:1px;background:rgba(0,191,255,.08);margin:2rem 0}
+
+/* EU LÜCKE */
+#eu-luecke{padding:7rem 0;background:#020c14;border-top:1px solid rgba(255,45,85,.1)}
+.eu-intro{text-align:center;margin-bottom:4rem}
+.eu-intro .sec-lbl{justify-content:center}
+.eu-intro .sec-lbl::before{display:none}
+.eu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:rgba(255,45,85,.08)}
+.eu-card{background:#020c14;padding:2.5rem 2rem;position:relative;transition:background .22s}
+.eu-card:hover{background:rgba(255,45,85,.03)}
+.eu-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#ff2d55;transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.eu-card:hover::after{transform:scaleX(1)}
+.eu-stat{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;color:#ff2d55;line-height:1;margin-bottom:.5rem}
+.eu-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:.75rem}
+.eu-body{font-size:.8rem;color:#a8c8e0;line-height:1.78}
+.eu-body em{color:#00ff99;font-style:normal}
+.eu-statement{margin-top:3.5rem;padding:2rem 2.5rem;border-left:3px solid #00bfff;background:rgba(0,191,255,.05)}
+.eu-s-text{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;color:#fff;line-height:1.5;margin-bottom:.5rem}
+.eu-s-sub{font-size:.8rem;color:#a8c8e0;line-height:1.75}
+
+/* PRODUKTE */
+#produkte{padding:7rem 0;background:#061420}
+#produkte::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#00bfff,transparent);opacity:.2}
+.prod-list{margin-top:2.5rem;display:flex;flex-direction:column}
+.prod-item{display:grid;grid-template-columns:40px 1fr auto;gap:0 1.8rem;align-items:baseline;padding:1.6rem 0;border-bottom:1px solid rgba(0,191,255,.07);position:relative;transition:background .2s}
+.prod-item:first-child{border-top:1px solid rgba(0,191,255,.07)}
+.prod-item::before{content:'';position:absolute;left:-2rem;top:0;bottom:0;width:2px;background:#00ff99;transform:scaleY(0);transform-origin:bottom;transition:transform .3s}
+.prod-item:hover::before{transform:scaleY(1)}
+.prod-item:hover{background:rgba(0,191,255,.02);padding-left:2rem;margin-left:-2rem;padding-right:2rem;margin-right:-2rem}
+.prod-n{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:#2e5068;padding-top:.15rem}
+.prod-name{font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;color:#fff;margin-bottom:.22rem}
+.prod-desc{font-size:.78rem;color:#a8c8e0;line-height:1.68;max-width:580px}
+.prod-tag-agent{font-size:.52rem;letter-spacing:.08em;padding:.12rem .38rem;border:1px solid rgba(0,255,153,.25);color:#00ff99;margin-top:.4rem;display:inline-block}
+.prod-status{font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;padding-top:.15rem}
+.ps-live{color:#00ff99}.ps-dev{color:#2e5068}.ps-plan{color:#2e5068;opacity:.6}
+
+/* SOLUTION */
+#solution{padding:8rem 0;background:#020c14}
+.sol-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:1.4rem;padding:1.4rem 0;border-bottom:1px solid rgba(0,191,255,.06)}
+.step:last-child{border:none}
+.step-num{font-family:'IBM Plex Mono',monospace;font-size:2.2rem;font-weight:500;color:rgba(0,191,255,.1);line-height:1;flex-shrink:0;width:56px;text-align:right;transition:color .28s}
+.step:hover .step-num{color:#00ff99}
+.step-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:.45rem}
+.step-body{font-size:.8rem;color:#a8c8e0;line-height:1.75}
+.plat-diagram{background:#061420;border:1px solid rgba(0,191,255,.12);overflow:hidden}
+.plat-hdr{padding:.6rem .9rem;background:#0a1d2e;border-bottom:1px solid rgba(0,191,255,.1);font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:#2e5068}
+.plat-layer{padding:1.4rem 1.6rem;border-bottom:1px solid rgba(0,191,255,.07);transition:background .2s;position:relative}
+.plat-layer:last-child{border:none}
+.plat-layer:hover{background:#0a1d2e}
+.plat-layer::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;opacity:0;transition:opacity .2s}
+.plat-layer:hover::before{opacity:1}
+.plg::before{background:#00ff99}.plb::before{background:#00bfff}.pla::before{background:#ff9500}.plp::before{background:#c084fc}
+.pl-badge{display:inline-block;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;padding:.1rem .38rem;border:1px solid;margin-bottom:.55rem}
+.plg .pl-badge{border-color:rgba(0,255,153,.28);color:#00ff99}
+.plb .pl-badge{border-color:rgba(0,191,255,.28);color:#00bfff}
+.pla .pl-badge{border-color:rgba(255,149,0,.28);color:#ff9500}
+.plp .pl-badge{border-color:rgba(192,132,252,.28);color:#c084fc}
+.pl-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:#fff;margin-bottom:.3rem}
+.pl-desc{font-size:.76rem;color:#a8c8e0;line-height:1.65;margin-bottom:.7rem}
+.pl-tags{display:flex;flex-wrap:wrap;gap:.28rem}
+.pl-tag{font-size:.55rem;padding:.1rem .35rem;border:1px solid rgba(0,191,255,.13);color:#4a7090}
+
+/* DEMO */
+#demo{padding:8rem 0;background:#061420}
+.demo-hdr{text-align:center;margin-bottom:4rem}
+.demo-hdr .sec-lbl{justify-content:center}
+.demo-hdr .sec-lbl::before{display:none}
+.demo-layout{display:grid;grid-template-columns:220px 1fr;border:1px solid rgba(0,191,255,.12);background:#020c14}
+.demo-sb{border-right:1px solid rgba(0,191,255,.1);background:#061420}
+.dsb-title{padding:.55rem .85rem;font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:#2e5068;border-bottom:1px solid rgba(0,191,255,.08)}
+.dsa{padding:.62rem .85rem;border-bottom:1px solid rgba(0,191,255,.05);cursor:pointer;transition:all .18s;position:relative}
+.dsa::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;opacity:0;transition:opacity .18s}
+.dsa:hover::before,.dsa.on::before{opacity:1}
+.dsa.g::before{background:#00ff99}.dsa.b::before{background:#00bfff}.dsa.a::before{background:#ff9500}.dsa.r::before{background:#ff2d55}
+.dsa.on,.dsa:hover{background:#0a1d2e}
+.dsa-name{font-size:.72rem;font-weight:500;color:#a8c8e0;margin-bottom:.18rem}
+.dsa-vert{font-size:.57rem;color:#2e5068;margin-bottom:.3rem}
+.dsa-st{font-size:.54rem;display:flex;align-items:center;gap:.28rem;color:#2e5068}
+.dsa-st.run{color:#00ff99}
+.dsd{width:5px;height:5px;border-radius:50%;background:#2e5068}
+.dsa-st.run .dsd{background:#00ff99;animation:pulse .9s infinite}
+.demo-main{display:flex;flex-direction:column;background:#020c14}
+.demo-top{display:flex;align-items:center;justify-content:space-between;padding:.45rem .85rem;background:#061420;border-bottom:1px solid rgba(0,191,255,.08);font-size:.6rem;color:#2e5068}
+.demo-taskrow{display:flex;gap:.5rem;align-items:center;padding:.55rem .85rem;background:rgba(6,20,32,.7);border-bottom:1px solid rgba(0,191,255,.08)}
+.demo-inp{flex:1;background:transparent;border:none;color:#a8c8e0;font-family:'IBM Plex Mono',monospace;font-size:.72rem;outline:none}
+.demo-inp::placeholder{color:#2e5068}
+.demo-qbtn{font-size:.57rem;padding:.26rem .55rem;border:1px solid rgba(0,191,255,.18);color:#2e5068;background:none;font-family:'IBM Plex Mono',monospace;transition:all .18s;white-space:nowrap}
+.demo-qbtn:hover{border-color:#00ff99;color:#00ff99}
+.demo-runbtn{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.3rem 1rem;background:#00ff99;color:#020c14;border:none;font-weight:700;clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%);transition:all .2s;font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+.demo-runbtn:hover{background:#00bfff}
+.demo-runbtn:disabled{background:#2e5068;cursor:default}
+.demo-term{flex:1;padding:.85rem 1rem;font-size:.7rem;line-height:1.82;min-height:320px;overflow-y:auto;background:rgba(1,8,18,.9)}
+.dtl{display:flex;gap:.48rem;margin-bottom:2px;align-items:flex-start}
+.dtp{flex-shrink:0;width:70px;font-size:.58rem;opacity:.8;padding-top:.04rem}
+.dtp.THINK{color:#60a5fa}.dtp.PLAN{color:#a8c8e0}.dtp.ACT{color:#ff9500}.dtp.OBSERVE{color:#00ff99}.dtp.ANSWER{color:#fff}.dtp.SYS{color:#2e5068}.dtp.SIMULATE{color:#c084fc}.dtp.COMMIT{color:#00ff99}.dtp.EVALUATE{color:#c084fc}
+.dtm{flex:1}
+.dtm.THINK{color:#93c5fd}.dtm.PLAN{color:#a8c8e0}.dtm.ACT{color:#ff9500}.dtm.OBSERVE{color:#00ff99}.dtm.ANSWER{color:#fff;font-weight:500}.dtm.SYS{color:#2e5068}.dtm.SIMULATE{color:#c084fc}.dtm.COMMIT{color:#00ff99}.dtm.EVALUATE{color:#c084fc}
+.dt-cur{display:inline-block;width:7px;height:12px;background:#00bfff;animation:blink .8s infinite;vertical-align:text-bottom}
+.demo-sbar{display:flex;align-items:center;gap:1.4rem;padding:.35rem .85rem;background:#061420;border-top:1px solid rgba(0,191,255,.08);font-size:.58rem;color:#2e5068}
+
+/* VERTICALS */
+#verticals{padding:8rem 0;background:#020c14}
+.vert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;background:rgba(0,191,255,.06);margin-top:3.5rem}
+.vc{background:#020c14;padding:2.5rem 2rem;transition:background .22s;position:relative;cursor:default}
+.vc:hover{background:#061420}
+.vc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;transform:scaleX(0);transition:transform .38s;transform-origin:left}
+.vc:hover::after{transform:scaleX(1)}
+.vc.g::after{background:#00ff99}.vc.b::after{background:#00bfff}.vc.a::after{background:#ff9500}.vc.r::after{background:#ff2d55}.vc.p::after{background:#c084fc}
+.vc-ico{font-size:2rem;display:block;margin-bottom:1.4rem;animation:drift 5s ease-in-out infinite}
+.vc-title{font-family:'Syne',sans-serif;font-size:1.02rem;font-weight:700;color:#fff;margin-bottom:.45rem}
+.vc-kpi{font-size:.72rem;font-weight:500;margin-bottom:.85rem}
+.vc.g .vc-kpi{color:#00ff99}.vc.b .vc-kpi{color:#00bfff}.vc.a .vc-kpi{color:#ff9500}.vc.r .vc-kpi{color:#ff2d55}.vc.p .vc-kpi{color:#c084fc}
+.vc-body{font-size:.78rem;color:#a8c8e0;line-height:1.72;margin-bottom:1.1rem}
+.vc-tools{display:flex;flex-wrap:wrap;gap:.25rem}
+.vt{font-size:.53rem;padding:.09rem .32rem;border:1px solid rgba(0,191,255,.14);color:#4a7090}
+
+/* WELTMODELL */
+#weltmodell{padding:8rem 0;background:#061420}
+#weltmodell::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(192,132,252,.04) 0%,transparent 65%);pointer-events:none}
+.wm-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.wm-box{background:rgba(6,20,32,.8);border:1px solid rgba(192,132,252,.2);padding:1.5rem;position:relative}
+.wm-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#c084fc,transparent);opacity:.5}
+.wm-box-lbl{font-size:.57rem;letter-spacing:.15em;text-transform:uppercase;color:#c084fc;display:flex;align-items:center;gap:.38rem;margin-bottom:1rem}
+.wm-box-lbl::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:#c084fc;animation:pulse 1.5s infinite}
+.wm-feats{display:flex;flex-direction:column;gap:1.4rem;margin-top:2rem}
+.wm-feat{display:flex;gap:.9rem;padding:1.2rem;background:#020c14;border:1px solid rgba(0,191,255,.1);border-left:2px solid #c084fc;transition:background .2s}
+.wm-feat:hover{background:#0a1d2e}
+.wm-feat-ico{font-size:1.35rem;flex-shrink:0;margin-top:.1rem}
+.wm-feat-title{font-family:'Syne',sans-serif;font-size:.92rem;font-weight:700;color:#fff;margin-bottom:.32rem}
+.wm-feat-body{font-size:.78rem;color:#a8c8e0;line-height:1.72}
+
+/* MANIFEST */
+#manifest{padding:7rem 0;background:#020c14}
+#manifest::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 50%,rgba(0,255,153,.03) 0%,transparent 60%);pointer-events:none}
+.manifest-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;margin-top:3.5rem}
+.mf-item{border-left:2px solid rgba(0,191,255,.18);padding-left:1.4rem;transition:border-color .25s}
+.mf-item:hover{border-left-color:#00bfff}
+.mf-n{font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:#2e5068;margin-bottom:.5rem;letter-spacing:.1em}
+.mf-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:#fff;margin-bottom:.5rem}
+.mf-body{font-size:.8rem;color:#a8c8e0;line-height:1.78}
+
+/* KONTAKT */
+#kontakt{padding:8rem 0;background:#061420;border-top:1px solid rgba(0,191,255,.1)}
+.kontakt-wrap{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start}
+.kontakt-left .sec-title{margin-bottom:1rem}
+.kontakt-left p{font-size:.85rem;color:#a8c8e0;line-height:1.82;margin-bottom:1.5rem}
+.kontakt-direct{margin-top:2rem;padding:1rem 1.2rem;border:1px solid rgba(0,191,255,.12);background:rgba(6,20,32,.8)}
+.kd-label{font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;color:#2e5068;margin-bottom:.4rem}
+.kd-val{font-size:.82rem;color:#00bfff}
+.kontakt-form{display:flex;flex-direction:column;gap:1rem}
+.kf-group{display:flex;flex-direction:column;gap:.38rem}
+.kf-label{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:#2e5068}
+.kf-input,.kf-textarea,.kf-select{background:#020c14;border:1px solid rgba(0,191,255,.12);color:#a8c8e0;font-family:'IBM Plex Mono',monospace;font-size:.75rem;padding:.7rem .9rem;outline:none;transition:border-color .2s;width:100%;appearance:none}
+.kf-input::placeholder,.kf-textarea::placeholder{color:#2e5068}
+.kf-input:focus,.kf-textarea:focus,.kf-select:focus{border-color:rgba(0,191,255,.4)}
+.kf-textarea{resize:vertical;min-height:120px}
+.kf-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%232e5068' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .9rem center;padding-right:2.2rem}
+.kf-select option{background:#061420}
+.kf-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.kf-submit{background:#00ff99;color:#020c14;font-family:'IBM Plex Mono',monospace;font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:none;padding:.85rem 2rem;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);transition:all .2s;align-self:flex-start;margin-top:.5rem}
+.kf-submit:hover{background:#00bfff}
+.kf-note{font-size:.6rem;color:#2e5068;margin-top:.75rem;line-height:1.65}
+
+/* FOOTER */
+footer{padding:2.5rem 0;background:#020c14;border-top:1px solid rgba(0,191,255,.08)}
+.footer-inner{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2rem;max-width:1200px;margin:0 auto;padding:0 2rem}
+.footer-logo{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem}
+.footer-logo-dot{width:7px;height:7px;border-radius:50%;background:#00ff99}
+.footer-logo-text{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:#00bfff}
+.footer-logo-text b{color:#00ff99}
+.footer-tagline{font-size:.72rem;color:#2e5068;line-height:1.65;margin-bottom:1rem}
+.footer-copy{font-size:.6rem;color:#2e5068;letter-spacing:.06em}
+.footer-col-title{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:#2e5068;margin-bottom:.85rem}
+.footer-links{display:flex;flex-direction:column;gap:.45rem}
+.footer-link{font-size:.75rem;color:#4a7090;text-decoration:none;transition:color .18s}
+.footer-link:hover{color:#00bfff}
+.footer-contact-val{font-size:.75rem;color:#4a7090;line-height:1.75}
+.footer-contact-val a{color:#00bfff;text-decoration:none}
+.footer-contact-val a:hover{color:#00ff99}
+.footer-bottom{max-width:1200px;margin:2rem auto 0;padding:1.5rem 2rem 0;border-top:1px solid rgba(0,191,255,.06);display:flex;justify-content:space-between;align-items:center;font-size:.58rem;color:#2e5068;flex-wrap:wrap;gap:.5rem}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}.rd4{transition-delay:.4s}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;right:2rem;z-index:999;font-family:'IBM Plex Mono',monospace;font-size:.72rem;padding:.7rem 1.4rem;background:#00ff99;color:#020c14;font-weight:700;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);transform:translateY(120%);transition:transform .3s;pointer-events:none}
+#toast.show{transform:translateY(0)}
+
+@media(max-width:900px){
+  .hero-wrap{grid-template-columns:1fr}
+  .hero-terminal{display:none}
+  .eu-grid,.sol-layout,.wm-layout,.manifest-grid,.kontakt-wrap{grid-template-columns:1fr}
+  .vert-grid{grid-template-columns:1fr 1fr}
+  .demo-layout{grid-template-columns:1fr}
+  .demo-sb{display:flex;overflow-x:auto;border-right:none;border-bottom:1px solid rgba(0,191,255,.1)}
+  .dsa{flex-shrink:0;width:150px}
+  .footer-inner{grid-template-columns:1fr}
+  .nav-link:not(.nav-cta){display:none}
+}
+@media(max-width:600px){
+  .vert-grid{grid-template-columns:1fr}
+  .hero-metrics{grid-template-columns:1fr}
+  .hm{border-right:none;border-bottom:1px solid rgba(0,191,255,.08)}
+}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-dot"></div>
+      <span class="nav-logo-text"><b>Neuronium</b> Engineers</span>
+
+      <span class="nav-logo-badge">OS v0.2</span>
+    </a>
+    <div class="nav-links">
+      <a href="#eu-luecke" class="nav-link">Der Markt</a>
+      <a href="#produkte" class="nav-link">Produkte</a>
+      <a href="#demo" class="nav-link">Live Demo</a>
+      <a href="#manifest" class="nav-link">Grundsätze</a>
+      <a href="#kontakt" class="nav-cta">Kontakt →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-scan"></div>
+  <div class="hero-wrap">
+    <div class="hero-left">
+      <div class="hero-badge"><div class="hero-badge-dot"></div> Frankfurt am Main · DSGVO-konform · Made in Germany · neuronium.engineer</div>
+      <p class="hero-pre">Neuronium Engineers</p>
+      <h1 class="hero-h1">
+        <span class="l1">Agenten, die</span>
+        <span class="l2">Aufgaben erledigen.</span>
+        <span class="l3">Vollständig.</span>
+      </h1>
+      <p class="hero-sub">Wir bauen agentische KI-Infrastruktur für die öffentliche Verwaltung und den deutschen Mittelstand — Software, die Prozesse eigenständig plant, ausführt und abschließt.</p>
+      <div class="hero-actions">
+        <a href="#demo" class="btn btn-primary">Live Demo starten →</a>
+        <a href="#kontakt" class="btn btn-secondary">Kontakt aufnehmen</a>
+      </div>
+      <div class="hero-metrics">
+        <div class="hm">
+          <span class="hm-val r" data-target="11000" data-suffix="+">11.000+</span>
+          <span class="hm-lbl">Kommunen mit<br>OZG-Deadline 2026</span>
+        </div>
+        <div class="hm">
+          <span class="hm-val r" data-target="13.5" data-suffix="%" data-dec="1">13,5%</span>
+          <span class="hm-lbl">KI-Nutzung EU<br>Ziel: 75 %</span>
+        </div>
+        <div class="hm">
+          <span class="hm-val r">21/27</span>
+          <span class="hm-lbl">Deutschland<br>E-Gov Ranking EU</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-terminal">
+      <div class="ht-bar">
+        <div class="htd r"></div><div class="htd y"></div><div class="htd g"></div>
+        <span class="ht-title">neuronium-os ~ agent dispatch</span>
+      </div>
+      <div class="ht-body" id="ht-body"></div>
+    </div>
+  </div>
+</section>
+
+<!-- EU LÜCKE -->
+<section id="eu-luecke">
+  <div class="container">
+    <div class="eu-intro reveal">
+      <div class="sec-lbl">01 — Das strukturelle Problem</div>
+      <h2 class="sec-title" style="text-align:center">Die Lücke ist dokumentiert.<br><em style="color:#ff2d55">Sie wächst.</em></h2>
+    </div>
+    <div class="eu-grid reveal">
+      <div class="eu-card">
+        <div class="eu-stat">21/27</div>
+        <div class="eu-title">E-Government Ranking</div>
+        <p class="eu-body">Deutschland belegt Platz 21 von 27 EU-Mitgliedstaaten im E-Government-Index 2025. Hinter Malta, Estland und Litauen. Das OZG verpflichtet alle <em>11.000+ Kommunen</em> zur vollständigen Digitalisierung bis 2026.</p>
+      </div>
+      <div class="eu-card">
+        <div class="eu-stat">13,5%</div>
+        <div class="eu-title">KI-Nutzung in EU-Unternehmen</div>
+        <p class="eu-body">Nur 13,5 % der europäischen Unternehmen setzen heute KI ein. Das verbindliche EU-Ziel für 2030 lautet 75 %. <em>61,5 Prozentpunkte</em> müssen in 5 Jahren erschlossen werden — das ist eine strukturelle Beschaffungspflicht.</p>
+      </div>
+      <div class="eu-card">
+        <div class="eu-stat">10,2 Mio</div>
+        <div class="eu-title">Fehlende IKT-Fachkräfte</div>
+        <p class="eu-body">Der EU fehlen bis 2030 über 10 Millionen IKT-Spezialisten. Das Ziel: 20 Millionen — heute sind es 9,76 Millionen. Der Rückstand macht manuelle Digitalisierung <em>strukturell unmöglich</em>. Agenten sind die einzige skalierbare Antwort.</p>
+      </div>
+    </div>
+    <div class="eu-statement reveal">
+      <div class="eu-s-text">Das ist kein Erkenntnisproblem. Es ist ein Umsetzungsproblem. Wir sind die Umsetzungsschicht.</div>
+      <div class="eu-s-sub">Neuronium Engineers baut die Infrastruktur, die verbindliche EU-Politikziele in betriebliche Realität übersetzt — ohne dass institutionelle Auftraggeber zu KI-Laboren werden müssen. Quellen: EU-Kommission State of the Digital Decade 2025 · Bitkom DESI Index 2025.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUKTE -->
+<section id="produkte">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-lbl">02 — Was wir bauen</div>
+      <h2 class="sec-title">Fünf Produkte.<br><em style="color:#00ff99">Ein Betriebssystem.</em></h2>
+      <p class="sec-sub">Jedes Produkt ist ein eigenständiger Agent-Stack — alle laufen auf dem Neuronium OS als gemeinsamer Ausführungsschicht.</p>
+    </div>
+    <div class="prod-list">
+      <div class="prod-item reveal">
+        <div class="prod-n">01</div>
+        <div>
+          <div class="prod-name">VerwaltungsAgent</div>
+          <p class="prod-desc">KI-native Verwaltungsplattform für deutsche Kommunen. Orchestriert Unteragenten für Formularverarbeitung, Rechtstextanalyse, Identitätsprüfung und Bürgerkommunikation. DSGVO-konform, OZG-tauglich, deployed auf Render.com.</p>
+          <span class="prod-tag-agent">Direkte OZG-Antwort · 11.000+ Kommunen adressierbar</span>
+        </div>
+        <div class="prod-status ps-live">● Live</div>
+      </div>
+      <div class="prod-item reveal rd1">
+        <div class="prod-n">02</div>
+        <div>
+          <div class="prod-name">AGENTIX</div>
+          <p class="prod-desc">Multi-Agenten-Plattform für KMU und Mittelstand. Agenten für Vertrieb, Compliance-Monitoring, Beschaffung und Berichterstattung. No-Code-Interface — kein KI-Vorwissen auf Kundenseite erforderlich. Gebaut für DACH-Regulierungskontext.</p>
+          <span class="prod-tag-agent">3,2 Mio KMU in Deutschland · Ziel-ARPU €300–900/Monat</span>
+        </div>
+        <div class="prod-status ps-dev">○ In Entwicklung</div>
+      </div>
+      <div class="prod-item reveal rd2">
+        <div class="prod-n">03</div>
+        <div>
+          <div class="prod-name">Neuronium OS</div>
+          <p class="prod-desc">Agentische Rechenumgebung mit paralleler Workflow-Ausführung, kontextpersistentem Gedächtnis und Author Agent für automatisierte Dokumentenproduktion. Betriebssystem aller Neuronium-Produkte.</p>
+          <span class="prod-tag-agent">Core infrastructure · ReAct-Loop · Weltmodell-Engine</span>
+        </div>
+        <div class="prod-status ps-dev">○ In Entwicklung</div>
+      </div>
+      <div class="prod-item reveal rd3">
+        <div class="prod-n">04</div>
+        <div>
+          <div class="prod-name">War Room</div>
+          <p class="prod-desc">Geopolitische Risikoanalyse-SaaS für DACH-CFOs und COOs. Kontinuierliche Überwachungsagenten erfassen Sanktionslisten, Lieferkettenstörungen und geopolitische Volatilität. Automatisierte Tagesbriefings. Ersetzt Legacy-Abonnements bis €200K/Jahr.</p>
+          <span class="prod-tag-agent">40.000+ DACH-Unternehmen mit Bedarf · ARPU €800–2.000/Monat</span>
+        </div>
+        <div class="prod-status ps-plan">– Geplant Q1 2027</div>
+      </div>
+      <div class="prod-item reveal rd4">
+        <div class="prod-n">05</div>
+        <div>
+          <div class="prod-name">EduVerse</div>
+          <p class="prod-desc">Adaptive KI-Lernplattform gegen den EU-IKT-Fachkräftemangel. Lernagenten individualisieren Curricula und produzieren Kursmaterial aus Quelldokumenten. DigitalPakt Schule-kompatibel.</p>
+          <span class="prod-tag-agent">DigitalPakt Schule: €5 Mrd aktiv · EU-IKT-Lücke: 10,2 Mio</span>
+        </div>
+        <div class="prod-status ps-plan">– Geplant</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section id="solution">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-lbl">03 — Wie es funktioniert</div>
+      <h2 class="sec-title">ReAct-Architektur.<br><em style="color:#00bfff">Ende-zu-Ende.</em></h2>
+    </div>
+    <div class="sol-layout">
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">01</div>
+          <div>
+            <div class="step-title">Task-Eingang & Analyse</div>
+            <p class="step-body">Ein Auftrag kommt rein — natürlichsprachlich, strukturiert oder per API. Der Orchestrator analysiert den Task, zerlegt ihn in Unteraufgaben und wählt die passenden Agenten aus dem Registry aus.</p>
+          </div>
+        </div>
+        <div class="step reveal rd1">
+          <div class="step-num">02</div>
+          <div>
+            <div class="step-title">Agentischer ReAct-Loop</div>
+            <p class="step-body">Jeder Agent durchläuft THINK → SIMULATE → EVALUATE → COMMIT → ACT → OBSERVE — mit Weltmodell-gestütztem 3-Schritt-Vorausdenken. Kein blindes Ausführen. Jede Aktion wird vor dem Commit bewertet.</p>
+          </div>
+        </div>
+        <div class="step reveal rd2">
+          <div class="step-num">03</div>
+          <div>
+            <div class="step-title">Verifizierbares Ergebnis</div>
+            <p class="step-body">Das Endresultat ist auditierbar — jeder Schritt protokolliert, jede Tool-Nutzung geloggt, jede Entscheidung nachvollziehbar. Kein Black-Box-Output. Vollständig DSGVO-konform.</p>
+          </div>
+        </div>
+      </div>
+      <div class="plat-diagram reveal">
+        <div class="plat-hdr">Plattform-Architektur · Neuronium OS v0.2</div>
+        <div class="plat-layer plg">
+          <div class="pl-badge">Produkt-Schicht</div>
+          <div class="pl-title">VerwaltungsAgent · AGENTIX · War Room · EduVerse</div>
+          <p class="pl-desc">Domänenspezifische Agenten-Stacks mit eingebetteten Tools und Fachregeln.</p>
+          <div class="pl-tags">
+            <span class="pl-tag">OZG-konform</span><span class="pl-tag">DSGVO</span><span class="pl-tag">No-Code-Config</span>
+          </div>
+        </div>
+        <div class="plat-layer plb">
+          <div class="pl-badge">Orchestrierungs-Schicht</div>
+          <div class="pl-title">AGENTIX Multi-Agent Orchestrator</div>
+          <p class="pl-desc">Parallele Ausführung, Task-Routing, Agent-zu-Agent-Kommunikation, Fehlerbehandlung und Retry-Logik.</p>
+          <div class="pl-tags">
+            <span class="pl-tag">Parallel execution</span><span class="pl-tag">Tool registry</span><span class="pl-tag">Context persistence</span>
+          </div>
+        </div>
+        <div class="plat-layer pla">
+          <div class="pl-badge">Reasoning-Schicht</div>
+          <div class="pl-title">ReAct-Loop · Weltmodell · 3-Step-Ahead</div>
+          <p class="pl-desc">Vorausschauendes Reasoning mit Szenariobewertung vor jeder Commit-Entscheidung.</p>
+          <div class="pl-tags">
+            <span class="pl-tag">THINK</span><span class="pl-tag">SIMULATE</span><span class="pl-tag">EVALUATE</span><span class="pl-tag">COMMIT</span>
+          </div>
+        </div>
+        <div class="plat-layer plp">
+          <div class="pl-badge">Infrastruktur-Schicht</div>
+          <div class="pl-title">Neuronium OS Kernel · FastAPI · Claude API</div>
+          <p class="pl-desc">Stabile Ausführungsumgebung mit WebSocket-Streaming, persistentem State und Audit-Logging.</p>
+          <div class="pl-tags">
+            <span class="pl-tag">FastAPI</span><span class="pl-tag">WebSocket</span><span class="pl-tag">Frankfurt-hosted</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo">
+  <div class="container">
+    <div class="demo-hdr reveal">
+      <div class="sec-lbl">04 — Live Demo</div>
+      <h2 class="sec-title">Agenten in Aktion.</h2>
+      <p class="sec-sub">Wählen Sie einen Agenten, passen Sie den Task an und beobachten Sie den vollständigen ReAct-Loop in Echtzeit.</p>
+    </div>
+    <div class="demo-layout reveal">
+      <div class="demo-sb">
+        <div class="dsb-title">Agenten-Registry</div>
+        <div class="dsa g on" data-ag="medidoc" onclick="selAg('medidoc',this)">
+          <div class="dsa-name">MediDoc Pro</div>
+          <div class="dsa-vert">Healthcare · Dokumentation</div>
+          <div class="dsa-st run"><div class="dsd"></div>Online</div>
+        </div>
+        <div class="dsa b" data-ag="verwaltung" onclick="selAg('verwaltung',this)">
+          <div class="dsa-name">VerwaltungsAgent</div>
+          <div class="dsa-vert">E-Government · OZG</div>
+          <div class="dsa-st run"><div class="dsd"></div>Online</div>
+        </div>
+        <div class="dsa a" data-ag="warroom" onclick="selAg('warroom',this)">
+          <div class="dsa-name">War Room</div>
+          <div class="dsa-vert">Geopolitik · Risiko</div>
+          <div class="dsa-st run"><div class="dsd"></div>Online</div>
+        </div>
+        <div class="dsa r" data-ag="industrie" onclick="selAg('industrie',this)">
+          <div class="dsa-name">IndustrieAgent</div>
+          <div class="dsa-vert">Produktion · Wartung</div>
+          <div class="dsa-st run"><div class="dsd"></div>Online</div>
+        </div>
+      </div>
+      <div class="demo-main">
+        <div class="demo-top">
+          <span id="demo-agent-label" style="color:#00ff99;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase">● MediDoc Pro — Bereit</span>
+          <span style="font-size:.58rem;color:#2e5068">Neuronium OS v0.2 · ReAct aktiv</span>
+        </div>
+        <div class="demo-taskrow">
+          <input class="demo-inp" id="demo-input" placeholder="Task eingeben oder Quick-Task wählen…">
+          <button class="demo-qbtn" onclick="setQ(0)">OZG-Antrag</button>
+          <button class="demo-qbtn" onclick="setQ(1)">Sanktions-Check</button>
+          <button class="demo-qbtn" onclick="setQ(2)">SOAP-Notiz</button>
+          <button class="demo-runbtn" id="demo-runbtn" onclick="runDemo()">▶ Dispatch</button>
+        </div>
+        <div class="demo-term" id="demo-term"></div>
+        <div class="demo-sbar">
+          <span>Tasks: <span id="dtasks" style="color:#00ff99">0</span></span>
+          <span>Agent: <span id="dagent-name" style="color:#00bfff">MediDoc Pro</span></span>
+          <span>Status: <span id="dstatus" style="color:#00ff99">● Bereit</span></span>
+          <span style="margin-left:auto;font-size:.55rem">Neuronium OS · Frankfurt am Main</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERTICALS -->
+<section id="verticals">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-lbl">05 — Einsatzbereiche</div>
+      <h2 class="sec-title">Neun Märkte.<br><em style="color:#00bfff">Eine Plattform.</em></h2>
+    </div>
+    <div class="vert-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="vc g reveal">
+        <span class="vc-ico">🏛</span>
+        <div class="vc-title">Kommunalverwaltung</div>
+        <div class="vc-kpi">11.000+ Kommunen · OZG 2026</div>
+        <p class="vc-body">Vollautomatische Bearbeitung von Bürgeranfragen, Formularen und Bescheiden. Von der Anfrage bis zum abgeschlossenen Verwaltungsakt ohne manuelle Eingriffe.</p>
+        <div class="vc-tools"><span class="vt">Formular-Agent</span><span class="vt">Rechtstext-Agent</span><span class="vt">Bescheid-Agent</span></div>
+      </div>
+      <div class="vc b reveal rd1">
+        <span class="vc-ico">🏢</span>
+        <div class="vc-title">Mittelstand & KMU</div>
+        <div class="vc-kpi">3,2 Mio Unternehmen in DE</div>
+        <p class="vc-body">Agentische Pipelines für Vertrieb, Compliance, Beschaffung und Reporting. Schlüsselfertig deployt, konfigurierbar ohne Entwickler, messbar in Arbeitszeit-Einsparung.</p>
+        <div class="vc-tools"><span class="vt">Sales-Agent</span><span class="vt">Compliance-Agent</span><span class="vt">Report-Agent</span></div>
+      </div>
+      <div class="vc r reveal rd2">
+        <span class="vc-ico">🏥</span>
+        <div class="vc-title">Medizin & Kliniken</div>
+        <div class="vc-kpi">2.000+ Krankenhäuser DE · DSGVO</div>
+        <p class="vc-body">Automatisierte SOAP-Dokumentation, ICD-10-Kodierung, Überweisungsmanagement und klinische Entscheidungsunterstützung. Reduziert ärztlichen Dokumentationsaufwand bis 65 %.</p>
+        <div class="vc-tools"><span class="vt">SOAP-Agent</span><span class="vt">ICD-10-Agent</span><span class="vt">Entscheidungs-Agent</span></div>
+      </div>
+      <div class="vc p reveal rd3">
+        <span class="vc-ico">🔬</span>
+        <div class="vc-title">Forschung & Wissenschaft</div>
+        <div class="vc-kpi">Horizon Europe · DFG · BMBF</div>
+        <p class="vc-body">Automatisierte Literaturrecherche, Hypothesengenerierung, Datenkorpus-Analyse und Förderantrag-Vorbereitung. Agenten beschleunigen den wissenschaftlichen Arbeitszyklus messbar.</p>
+        <div class="vc-tools"><span class="vt">Literatur-Agent</span><span class="vt">Hypothesen-Agent</span><span class="vt">Corpus-Agent</span></div>
+      </div>
+      <div class="vc b reveal rd4">
+        <span class="vc-ico">🎓</span>
+        <div class="vc-title">Universitäten & Bildung</div>
+        <div class="vc-kpi">400+ Hochschulen DE · DigitalPakt €5 Mrd</div>
+        <p class="vc-body">Adaptive Lernpfade, automatisierte Kursmaterialgenerierung, Prüfungsauswertung und Verwaltungsautomatisierung für Immatrikulation, Studienberatung und Prüfungsamt.</p>
+        <div class="vc-tools"><span class="vt">Lernpfad-Agent</span><span class="vt">Content-Agent</span><span class="vt">Prüfungs-Agent</span></div>
+      </div>
+      <div class="vc a reveal">
+        <span class="vc-ico">🚀</span>
+        <div class="vc-title">Raumfahrt & Luft- und Raumfahrt</div>
+        <div class="vc-kpi">ESA · DLR · EU Space Programme</div>
+        <p class="vc-body">Autonome Missionsdatenauswertung, Satellitentelemetrie-Analyse, Orbitalmechanik-Optimierung und Anomalieerkennung in Echtzeit. Agentische Schicht für ISR und Erdbeobachtungsdaten.</p>
+        <div class="vc-tools"><span class="vt">Telemetrie-Agent</span><span class="vt">Orbital-Agent</span><span class="vt">Anomalie-Agent</span></div>
+      </div>
+      <div class="vc a reveal rd1">
+        <span class="vc-ico">🌍</span>
+        <div class="vc-title">Geopolitisches Risiko</div>
+        <div class="vc-kpi">40.000+ DACH-Unternehmen</div>
+        <p class="vc-body">Permanente Überwachung von Sanktionslisten, Lieferkettenstörungen und geopolitischen Verschiebungen. Täglich aktualisierte Intelligence-Briefings für Führungsebene.</p>
+        <div class="vc-tools"><span class="vt">Sanctions-Agent</span><span class="vt">Supply-Chain-Agent</span><span class="vt">Briefing-Agent</span></div>
+      </div>
+      <div class="vc g reveal rd2">
+        <span class="vc-ico">🏭</span>
+        <div class="vc-title">Industrie & Produktion</div>
+        <div class="vc-kpi">Predictive Maintenance · Industrie 4.0</div>
+        <p class="vc-body">Sensorgestützte Ausfallprognose, automatisierte Wartungsplanung, Qualitätskontrolle und Produktionsoptimierung. Agenten reduzieren ungeplante Stillstandszeiten nachweislich.</p>
+        <div class="vc-tools"><span class="vt">Sensor-Agent</span><span class="vt">Maintenance-Agent</span><span class="vt">QS-Agent</span></div>
+      </div>
+      <div class="vc b reveal rd3">
+        <span class="vc-ico">🛡</span>
+        <div class="vc-title">Verteidigung & Sicherheit</div>
+        <div class="vc-kpi">EDF: €1,1 Mrd 2024–2027</div>
+        <p class="vc-body">ISR-Datenauswertung, autonome Drohnen-Missionsplanung und Lageberichte in Echtzeit. Einstieg über Partnerschaften mit deutschen Verteidigungskonzernen. Zeithorizont: 2027.</p>
+        <div class="vc-tools"><span class="vt">ISR-Agent</span><span class="vt">Missions-Agent</span><span class="vt">Lagebericht-Agent</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WELTMODELL -->
+<section id="weltmodell">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-lbl">06 — Weltmodell</div>
+      <h2 class="sec-title">Agenten, die<br><em style="color:#c084fc">vorausdenken.</em></h2>
+      <p class="sec-sub">Das Neuronium-Weltmodell simuliert die Konsequenzen jeder Aktion drei Schritte im Voraus — bevor der Agent committed.</p>
+    </div>
+    <div class="wm-layout">
+      <div class="reveal">
+        <div class="wm-box">
+          <div class="wm-box-lbl">Weltmodell-Engine · Reasoning Loop</div>
+          <svg viewBox="0 0 320 280" width="100%" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-top:.5rem">
+            <rect x="110" y="10" width="100" height="34" rx="3" fill="rgba(0,191,255,.08)" stroke="rgba(0,191,255,.3)" stroke-width="1"/>
+            <text x="160" y="32" fill="#00bfff" font-size="11" text-anchor="middle" font-family="monospace">THINK</text>
+            <line x1="160" y1="44" x2="160" y2="68" stroke="rgba(0,191,255,.2)" stroke-width="1" stroke-dasharray="3,3"/>
+            <rect x="90" y="68" width="140" height="34" rx="3" fill="rgba(192,132,252,.08)" stroke="rgba(192,132,252,.3)" stroke-width="1"/>
+            <text x="160" y="90" fill="#c084fc" font-size="11" text-anchor="middle" font-family="monospace">SIMULATE</text>
+            <line x1="160" y1="102" x2="160" y2="126" stroke="rgba(0,191,255,.2)" stroke-width="1" stroke-dasharray="3,3"/>
+            <rect x="90" y="126" width="140" height="34" rx="3" fill="rgba(192,132,252,.08)" stroke="rgba(192,132,252,.3)" stroke-width="1"/>
+            <text x="160" y="148" fill="#c084fc" font-size="11" text-anchor="middle" font-family="monospace">EVALUATE</text>
+            <line x1="160" y1="160" x2="160" y2="184" stroke="rgba(0,191,255,.2)" stroke-width="1" stroke-dasharray="3,3"/>
+            <rect x="110" y="184" width="100" height="34" rx="3" fill="rgba(0,255,153,.08)" stroke="rgba(0,255,153,.3)" stroke-width="1"/>
+            <text x="160" y="206" fill="#00ff99" font-size="11" text-anchor="middle" font-family="monospace">COMMIT</text>
+            <line x1="160" y1="218" x2="160" y2="242" stroke="rgba(0,191,255,.2)" stroke-width="1" stroke-dasharray="3,3"/>
+            <rect x="60" y="242" width="80" height="30" rx="3" fill="rgba(255,149,0,.08)" stroke="rgba(255,149,0,.3)" stroke-width="1"/>
+            <text x="100" y="262" fill="#ff9500" font-size="11" text-anchor="middle" font-family="monospace">ACT</text>
+            <rect x="180" y="242" width="80" height="30" rx="3" fill="rgba(255,45,85,.08)" stroke="rgba(255,45,85,.3)" stroke-width="1"/>
+            <text x="220" y="262" fill="#ff2d55" font-size="11" text-anchor="middle" font-family="monospace">ESCALATE</text>
+            <line x1="140" y1="218" x2="100" y2="242" stroke="rgba(255,149,0,.2)" stroke-width="1"/>
+            <line x1="180" y1="218" x2="220" y2="242" stroke="rgba(255,45,85,.2)" stroke-width="1"/>
+            <text x="68" y="236" fill="#00ff99" font-size="9" font-family="monospace">OK</text>
+            <text x="208" y="236" fill="#ff2d55" font-size="9" font-family="monospace">Risk</text>
+          </svg>
+        </div>
+      </div>
+      <div class="wm-feats reveal">
+        <div class="wm-feat">
+          <div class="wm-feat-ico">🔮</div>
+          <div>
+            <div class="wm-feat-title">3-Step-Ahead Reasoning</div>
+            <p class="wm-feat-body">Vor jeder Commit-Entscheidung simuliert der Agent drei mögliche Zukunftsszenarien und bewertet Risiken, bevor er handelt.</p>
+          </div>
+        </div>
+        <div class="wm-feat">
+          <div class="wm-feat-ico">🧠</div>
+          <div>
+            <div class="wm-feat-title">Kontextpersistenz</div>
+            <p class="wm-feat-body">Agenten merken sich den vollständigen Kontext über mehrere Tasks hinweg — kein Gedächtnisverlust zwischen Schritten.</p>
+          </div>
+        </div>
+        <div class="wm-feat">
+          <div class="wm-feat-ico">📋</div>
+          <div>
+            <div class="wm-feat-title">Vollständiges Audit-Log</div>
+            <p class="wm-feat-body">Jeder Schritt, jedes Tool-Call, jede Entscheidung wird protokolliert. Volle Transparenz — auditierbar nach DSGVO und Verwaltungsrecht.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MANIFEST -->
+<section id="manifest">
+  <div class="container">
+    <div class="reveal">
+      <div class="sec-lbl">07 — Grundsätze</div>
+      <h2 class="sec-title">Wie wir arbeiten.<br><em style="color:#00ff99">Was wir nicht tun.</em></h2>
+      <p class="sec-sub">Fünf operative Grundsätze — keine Werbetexte. Jeder ist an einem messbaren Verhalten überprüfbar.</p>
+    </div>
+    <div class="manifest-grid">
+      <div class="mf-item reveal">
+        <div class="mf-n">I</div>
+        <div class="mf-title">Ausführen vor Diskutieren</div>
+        <p class="mf-body">Strategiedokumente, die kein deploybares Ergebnis nach sich ziehen, sind interne Fehlinvestitionen. Jeder Grundsatz wird an einem konkreten Output gemessen — nicht an einer Präsentation.</p>
+      </div>
+      <div class="mf-item reveal rd1">
+        <div class="mf-n">II</div>
+        <div class="mf-title">Agenten schließen Aufgaben ab</div>
+        <p class="mf-body">Der Maßstab ist kein hilfreicher Hinweis. Der Maßstab ist ein abgeschlossener Workflow mit überprüfbarem Ergebnis. Agenten sind keine Assistenten — sie sind Ausführer.</p>
+      </div>
+      <div class="mf-item reveal rd2">
+        <div class="mf-n">III</div>
+        <div class="mf-title">Echte Daten, nachweisbare Ergebnisse</div>
+        <p class="mf-body">Keine erfundenen Kennzahlen, keine spekulativen Marktschätzungen als Tatsachenbehauptungen. Jede Zahl, die wir nennen, hat eine Quelle, die wir benennen — hier und in jedem Kundengespräch.</p>
+      </div>
+      <div class="mf-item reveal rd3">
+        <div class="mf-n">IV</div>
+        <div class="mf-title">Regulierung als Architekturmerkmal</div>
+        <p class="mf-body">DSGVO-Konformität, OZG-Ausrichtung und deutsche Verwaltungsstandards sind von der ersten Codezeile an eingebaut. Compliance ist kein nachträglicher Layer — sie ist Teil des Produktdesigns.</p>
+      </div>
+      <div class="mf-item reveal">
+        <div class="mf-n">V</div>
+        <div class="mf-title">Verantwortung in der Automatisierung</div>
+        <p class="mf-body">Wir dokumentieren, was Agenten tun und nach welcher Logik. Jede automatisierte Entscheidung ist auditierbar. Kein Einsatz in Kontexten, in denen Intransparenz rechtliche oder ethische Risiken erzeugt.</p>
+      </div>
+      <div class="mf-item reveal rd1" style="border-left-color:rgba(0,255,153,.4);background:rgba(0,255,153,.02);padding:1.4rem">
+        <div class="mf-n" style="color:#00ff99">∞</div>
+        <div class="mf-title" style="color:#00ff99">Die Kernaussage</div>
+        <p class="mf-body" style="font-size:.85rem;color:#a8c8e0">Europas Digitalisierungslücke ist kein Technologieproblem. Sie ist ein Umsetzungsproblem. Die Technologie ist vorhanden. Die Politikziele sind gesetzt. Die Budgets sind alloziiert. Was fehlt, ist die Infrastrukturschicht, die alles drei in betriebliche Realität übersetzt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section id="kontakt">
+  <div class="container">
+    <div class="kontakt-wrap">
+      <div class="kontakt-left reveal">
+        <div class="sec-lbl">08 — Kontakt</div>
+        <h2 class="sec-title">Was müssen<br><em style="color:#00ff99">Sie lösen?</em></h2>
+        <p>Ob Investitionsgespräch, Pilotprojekt, Demo oder Technologie-Partnerschaft — schreiben Sie direkt. Wir antworten innerhalb von 24 Stunden.</p>
+        <p>Wir arbeiten mit öffentlichen Einrichtungen, Forschungsinstituten, Kliniken, Universitäten, Industrieunternehmen und Investoren, die früh in einen strukturell unterbauten Markt einsteigen möchten.</p>
+        <div class="kontakt-direct">
+          <div class="kd-label">Kontakt</div>
+          <div class="kd-val">contact@neuronium.engineer</div>
+        </div>
+        <div class="kontakt-direct" style="margin-top:.75rem">
+          <div class="kd-label">Standort</div>
+          <div class="kd-val">Frankfurt am Main, Deutschland</div>
+        </div>
+        <div class="kontakt-direct" style="margin-top:.75rem">
+          <div class="kd-label">Web</div>
+          <div class="kd-val">neuronium.engineer</div>
+        </div>
+      </div>
+      <div class="reveal rd1">
+        <form class="kontakt-form" id="contact-form" onsubmit="handleForm(event)">
+          <div class="kf-row">
+            <div class="kf-group">
+              <label class="kf-label">Name</label>
+              <input class="kf-input" type="text" placeholder="Max Mustermann" required>
+            </div>
+            <div class="kf-group">
+              <label class="kf-label">Organisation</label>
+              <input class="kf-input" type="text" placeholder="Stadt Frankfurt / Muster GmbH">
+            </div>
+          </div>
+          <div class="kf-group">
+            <label class="kf-label">E-Mail</label>
+            <input class="kf-input" type="email" placeholder="m.mustermann@beispiel.de" required>
+          </div>
+          <div class="kf-group">
+            <label class="kf-label">Ich kontaktiere als</label>
+            <select class="kf-select">
+              <option value="" disabled selected>Bitte wählen</option>
+              <option>Kommunale Verwaltung / Behörde</option>
+              <option>Mittelständisches Unternehmen</option>
+              <option>Investor / Family Office</option>
+              <option>Technologie- / Beratungspartner</option>
+              <option>Presse / Medien</option>
+              <option>Sonstiges</option>
+            </select>
+          </div>
+          <div class="kf-group">
+            <label class="kf-label">Was beschäftigt Sie?</label>
+            <textarea class="kf-textarea" placeholder="Ein klarer Satz reicht. Kein Pitch erforderlich — nur das Problem, das Sie lösen wollen." required></textarea>
+          </div>
+          <button type="submit" class="kf-submit">Nachricht senden →</button>
+          <div class="kf-note">Oder direkt: <a href="mailto:contact@neuronium.engineer" style="color:#00bfff">contact@neuronium.engineer</a> · Antwortzeit: unter 24 Stunden</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">
+        <div class="footer-logo-dot"></div>
+        <span class="footer-logo-text"><b>Neuronium</b> Engineers</span>
+      </div>
+      <div class="footer-tagline">Agentische KI-Infrastruktur für Deutschland und Europa.<br>Ausführen. Messen. Iterieren.</div>
+      <div class="footer-copy">© 2026 Neuronium Engineers. Alle Rechte vorbehalten.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigation</div>
+      <div class="footer-links">
+        <a href="#eu-luecke" class="footer-link">Der Markt</a>
+        <a href="#produkte" class="footer-link">Produkte</a>
+        <a href="#solution" class="footer-link">Architektur</a>
+        <a href="#demo" class="footer-link">Live Demo</a>
+        <a href="#verticals" class="footer-link">Einsatzbereiche</a>
+        <a href="#manifest" class="footer-link">Grundsätze</a>
+        <a href="#kontakt" class="footer-link">Kontakt</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Kontakt</div>
+      <div class="footer-contact-val">
+        <a href="mailto:contact@neuronium.engineer">contact@neuronium.engineer</a><br>
+        Frankfurt am Main<br>
+        Deutschland<br>
+        neuronium.engineer
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Neuronium Engineers · Frankfurt am Main · 2026</span>
+    <span>DSGVO-konform · Made in Germany · Powered by Anthropic Claude</span>
+  </div>
+</footer>
+
+<script>
+// ── PARTICLE CANVAS ──────────────────────────────────────────
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function Particle() {
+  this.x = Math.random() * W;
+  this.y = Math.random() * H;
+  this.vx = (Math.random() - .5) * .5;
+  this.vy = (Math.random() - .5) * .5;
+  this.r = Math.random() * 1.5 + .5;
+  this.a = Math.random() * .5 + .1;
+}
+for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+function animParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,191,255,${p.a})`;
+    ctx.fill();
+  });
+  particles.forEach((a, i) => {
+    particles.slice(i + 1).forEach(b => {
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(0,191,255,${.08 * (1 - d / 120)})`;
+        ctx.stroke();
+      }
+    });
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ── HERO TERMINAL ─────────────────────────────────────────────
+const heroLines = [
+  {t:'SYS',m:'Neuronium OS v0.2.0 — Kernel gestartet'},
+  {t:'SYS',m:'Agenten: 4 online · Tools: 8 registriert · Weltmodell aktiv'},
+  {t:'THINK',m:'Task-Analyse: Bürgeranfrage Frankfurter Bauamt eingegangen'},
+  {t:'SIMULATE',m:'Szenario A: Formular-Agent → IDs prüfen → Weiterleitung'},
+  {t:'SIMULATE',m:'Szenario B: Direktbearbeitung → Bescheid-Entwurf sofort'},
+  {t:'EVALUATE',m:'Szenario A: Effizienz 87% · Fehlerrate <2% · Gewählt'},
+  {t:'COMMIT',m:'Aktion bestätigt — starte Formular-Agent + ID-Check-Agent'},
+  {t:'ACT',m:'Formular-Agent: Antrag digitalisiert, Felder extrahiert'},
+  {t:'ACT',m:'ID-Check-Agent: Identität verifiziert — GbA-konform'},
+  {t:'OBSERVE',m:'Zwischenergebnis: Antrag vollständig, zuständige Stelle: Baurechtsamt'},
+  {t:'ACT',m:'Bescheid-Entwurf generiert — Vorlage §34 BauGB konform'},
+  {t:'ANSWER',m:'✓ Vorgang abgeschlossen — Bearbeitungszeit: 23 Sekunden'},
+];
+let hIdx = 0;
+const htBody = document.getElementById('ht-body');
+
+function addHeroLine() {
+  if (hIdx >= heroLines.length) { hIdx = 0; htBody.innerHTML = ''; }
+  const l = heroLines[hIdx++];
+  const row = document.createElement('div');
+  row.className = 'htl';
+  row.innerHTML = `<span class="htp ${l.t}">[${l.t}]</span><span class="htm ${l.t}">${l.m}</span>`;
+  htBody.appendChild(row);
+  if (hIdx === heroLines.length) {
+    const cur = document.createElement('div');
+    cur.className = 'htl';
+    cur.innerHTML = '<span class="htp SYS">[SYS]</span><span class="htm SYS">Bereit für nächsten Task <span class="ht-cur"></span></span>';
+    htBody.appendChild(cur);
+  }
+  htBody.scrollTop = htBody.scrollHeight;
+}
+let hTimer;
+function startHeroLoop() {
+  hTimer = setInterval(() => {
+    addHeroLine();
+    if (hIdx > heroLines.length) { clearInterval(hTimer); setTimeout(startHeroLoop, 3000); }
+  }, 420);
+}
+setTimeout(startHeroLoop, 1200);
+
+// ── DEMO TERMINAL ─────────────────────────────────────────────
+let dAg = 'medidoc';
+let dRunning = false;
+let dTasks = 0;
+
+const AGS = {
+  medidoc: {
+    nm: 'MediDoc Pro',
+    qs: ['SOAP-Notiz: Patient 45J., Kopfschmerzen + Hypertonie','ICD-10 kodieren: Diabetes Typ 2, unkontrolliert','Überweisung Kardiologie: Verdacht auf KHK'],
+    steps: [
+      {t:'THINK',m:'Analyse: Klinische Dokumentationsaufgabe — Healthcare-Kontext'},
+      {t:'SIMULATE',m:'Szenario: ICD-10-Suche → SOAP-Generierung → Überweisung'},
+      {t:'EVALUATE',m:'Bewertung: vollständige Dokumentation möglich, Daten ausreichend'},
+      {t:'COMMIT',m:'Starte: icd10_lookup + soap_generator + send_referral'},
+      {t:'ACT',m:'[icd10_lookup] I10 — Hypertonie · G43.9 — Migräne (Verdacht)'},
+      {t:'OBSERVE',m:'Kodes verifiziert — DIMDI-konform 2025'},
+      {t:'ACT',m:'[soap_generator] S: Kopfschmerzen 2W., 6/10, RR 145/92 mmHg'},
+      {t:'ACT',m:'                A: Hypertonie Grad 1 + Spannungskopfschmerz'},
+      {t:'ACT',m:'                P: 24h-Messung · Ophtha-Überweisung · Ibu 400mg'},
+      {t:'COMMIT',m:'Überweisung: Kardiologie, Dringlichkeit mittel, elektronisch'},
+      {t:'ANSWER',m:'✓ SOAP-Notiz + ICD-10 + Überweisung abgeschlossen (11 Sek.)'},
+    ]
+  },
+  verwaltung: {
+    nm: 'VerwaltungsAgent',
+    qs: ['OZG-Antrag: Gewerbeanmeldung Frankfurt','Bürgeranfrage: Bauantrag Einfamilienhaus','KFZ-Abmeldung: vollständig automatisiert'],
+    steps: [
+      {t:'THINK',m:'Analyse: Kommunale Verwaltungsaufgabe — OZG §1 Kontext'},
+      {t:'SIMULATE',m:'Szenario A: Formular-Agent → Prüfung → Bescheid-Entwurf'},
+      {t:'EVALUATE',m:'Zuständigkeit: Ordnungsamt Frankfurt · §14 GewO einschlägig'},
+      {t:'COMMIT',m:'Starte: form_parser + legal_check + bescheid_generator'},
+      {t:'ACT',m:'[form_parser] Antragsteller ID verifiziert — GbA §3 konform'},
+      {t:'ACT',m:'[legal_check] §14 GewO: Voraussetzungen erfüllt — keine Versagungsgründe'},
+      {t:'OBSERVE',m:'Prüfung: kein Eintrag Gewerbezentralregister · BZR unauffällig'},
+      {t:'ACT',m:'[bescheid_generator] Genehmigung Entwurf — §34a GewO Vorlage'},
+      {t:'COMMIT',m:'Weiterleitung: Sachbearbeiter zur Unterschrift + DMS-Archivierung'},
+      {t:'ANSWER',m:'✓ Gewerbeanmeldung bearbeitet — Bearbeitungszeit: 28 Sekunden'},
+    ]
+  },
+  warroom: {
+    nm: 'War Room',
+    qs: ['Sanktions-Check: Lieferant Kovalev Industries Ltd.','Risiko-Briefing: DACH CFO — KW 19 2026','Supply-Chain: Ukraine-Exposition Stahllieferanten'],
+    steps: [
+      {t:'THINK',m:'Analyse: Geopolitisches Risiko-Monitoring — DACH Executive'},
+      {t:'SIMULATE',m:'Quellen: EU-Sanktionsliste · OFAC · BIS · ITAR · UN-Regime'},
+      {t:'EVALUATE',m:'Priorität: Sanktions-Screening + Lieferketten-Exposition'},
+      {t:'COMMIT',m:'Starte: sanctions_agent + supply_chain_agent + briefing_agent'},
+      {t:'ACT',m:'[sanctions_agent] Abgleich EU-Reg 833/2014 + UK-OFSI + US-OFAC'},
+      {t:'OBSERVE',m:'Ergebnis: Kein Direkttreffer — Eigentümerstruktur prüfen'},
+      {t:'ACT',m:'[sanctions_agent] UBO-Analyse: 2 Ebenen — keine sank. Personen'},
+      {t:'ACT',m:'[supply_chain_agent] Ukraine-Exposition: 12% Stahlimport betroffen'},
+      {t:'ACT',m:'[briefing_agent] Executive Summary generiert — DE/EN dual'},
+      {t:'ANSWER',m:'✓ Risiko-Check abgeschlossen — Kein unmittelbares Sanktionsrisiko'},
+    ]
+  },
+  industrie: {
+    nm: 'IndustrieAgent',
+    qs: ['Predictive Maintenance: Maschinenpark B07-B12','Ausfallkaskade simulieren: Linie 3 Ausfall','Wartungsplan optimieren: Q3 2026'],
+    steps: [
+      {t:'THINK',m:'Analyse: Industrielle Wartung — Produktionskritischer Kontext'},
+      {t:'SIMULATE',m:'Szenario: Sensor-Auswertung → Ausfallwahrscheinlichkeit → Plan'},
+      {t:'EVALUATE',m:'Datenlage: 14 Tage Sensordaten, 3 Anomalien detektiert'},
+      {t:'COMMIT',m:'Starte: sensor_analyzer + failure_predictor + maint_scheduler'},
+      {t:'ACT',m:'[sensor_analyzer] B08: Vibration +34% über Baseline — kritisch'},
+      {t:'ACT',m:'[sensor_analyzer] B11: Temperatur normal · B12: Öldruck -8%'},
+      {t:'OBSERVE',m:'Korrelation B08↔B12 festgestellt — Hydrauliksystem betroffen'},
+      {t:'ACT',m:'[failure_predictor] Ausfallwahrscheinlichkeit B08: 78% in 5 Tagen'},
+      {t:'ACT',m:'[maint_scheduler] Wartungsfenster: 14.05. 02:00–06:00 · Prio Hoch'},
+      {t:'ANSWER',m:'✓ Wartungsplan erstellt — Geschätzter Schaden verhindert: €42K'},
+    ]
+  }
+};
+
+function selAg(id, el) {
+  dAg = id;
+  document.querySelectorAll('.dsa').forEach(d => d.classList.remove('on'));
+  el.classList.add('on');
+  const ag = AGS[id];
+  document.getElementById('demo-agent-label').textContent = '● ' + ag.nm + ' — Bereit';
+  document.getElementById('dagent-name').textContent = ag.nm;
+  document.getElementById('dstatus').textContent = '● Bereit';
+  document.getElementById('demo-term').innerHTML = '';
+  document.getElementById('demo-input').placeholder = ag.qs[0];
+  document.getElementById('demo-input').value = '';
+}
+
+function setQ(i) {
+  const ag = AGS[dAg];
+  document.getElementById('demo-input').value = ag.qs[i % ag.qs.length];
+}
+
+function dLine(type, msg) {
+  const term = document.getElementById('demo-term');
+  const row = document.createElement('div');
+  row.className = 'dtl';
+  row.innerHTML = `<span class="dtp ${type}">[${type}]</span><span class="dtm ${type}">${msg}</span>`;
+  term.appendChild(row);
+  term.scrollTop = term.scrollHeight;
+}
+
+async function runDemo() {
+  if (dRunning) return;
+  dRunning = true;
+  const btn = document.getElementById('demo-runbtn');
+  btn.disabled = true;
+  document.getElementById('dstatus').textContent = '⟳ Läuft...';
+  document.getElementById('demo-agent-label').textContent = '● ' + AGS[dAg].nm + ' — Verarbeitung...';
+
+  const term = document.getElementById('demo-term');
+  const inp = document.getElementById('demo-input');
+  const task = inp.value.trim() || AGS[dAg].qs[0];
+
+  term.innerHTML = '';
+  dLine('SYS', 'Task empfangen: ' + task);
+  await sleep(300);
+
+  for (const step of AGS[dAg].steps) {
+    dLine(step.t, step.m);
+    await sleep(step.t === 'ANSWER' ? 100 : Math.random() * 280 + 180);
+  }
+
+  dTasks++;
+  document.getElementById('dtasks').textContent = dTasks;
+
+  const cur = document.createElement('div');
+  cur.className = 'dtl';
+  cur.innerHTML = '<span class="dtp SYS">[SYS]</span><span class="dtm SYS">Bereit für nächsten Task <span class="dt-cur"></span></span>';
+  term.appendChild(cur);
+  term.scrollTop = term.scrollHeight;
+
+  document.getElementById('dstatus').textContent = '● Bereit';
+  document.getElementById('demo-agent-label').textContent = '● ' + AGS[dAg].nm + ' — Bereit';
+  btn.disabled = false;
+  dRunning = false;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── NAV SCROLL ────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('nav');
+  nav.style.borderBottomColor = window.scrollY > 60 ? 'rgba(0,191,255,.15)' : 'rgba(0,191,255,.1)';
+  const sections = ['hero','eu-luecke','produkte','solution','demo','verticals','weltmodell','manifest','kontakt'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const link = document.querySelector(`.nav-link[href="#${id}"]`);
+    if (link) link.classList.toggle('on', r.top <= 100 && r.bottom > 100);
+  });
+}, {passive:true});
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revObs.unobserve(e.target); } });
+}, {threshold:.1, rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+// ── CONTACT FORM ──────────────────────────────────────────────
+function handleForm(e) {
+  e.preventDefault();
+  const toast = document.getElementById('toast');
+  toast.textContent = '✓ Nachricht gesendet — wir melden uns in unter 24h';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+  e.target.reset();
+}
+
+// ── BOOT ─────────────────────────────────────────────────────
+document.getElementById('demo-input').placeholder = AGS['medidoc'].qs[0];
+</script>
+</body>
+</html>
